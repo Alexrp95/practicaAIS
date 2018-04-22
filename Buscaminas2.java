@@ -8,15 +8,22 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 
  
 import javax.swing.*;
 public class Buscaminas extends JFrame implements ActionListener, MouseListener{
-    String dificultad;
+    static String dificultadV;
     JComboBox dificultadBox;
     JDialog dificultadPanel;
     JLabel dificultadLabel;
+    JLabel CargarLabel;
     JButton Botonjugar;
+    int[] tiempos = {0,0,0,0,0,0,0,0,0,0};
+    int[] tiemposI = {0,0,0,0,0,0,0,0,0,0};
+    int[] tiemposE = {0,0,0,0,0,0,0,0,0,0};
     int nomines;
     int perm[][];
     String tmp;
@@ -35,19 +42,19 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     double endtime;
     public Buscaminas(String dificultad){
         
-        if(dificultad == "PRINCIPIANTE"){
+        if("PRINCIPIANTE".equals(dificultad)){
             n = 10;
             m = 10;
             nomines = 10;
         }
         else 
-          if(dificultad == "INTERMEDIO"){
+          if("INTERMEDIO".equals(dificultad)){
             n =16;
             m = 16;
             nomines = 40;
         }
          else 
-          if(dificultad == "EXPERTO"){
+          if("EXPERTO".equals(dificultad)){
             n =32;
             m = 16;
             nomines = 99;
@@ -134,16 +141,19 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             return;
         }else if (mines[row+1][column+1] == 1){
             JOptionPane.showMessageDialog(temporaryLostComponent, "You set off a Mine!!!!.");
-            
+            GuardarTiempo();
             JDialog GuardarPanel = new JDialog();
              JLabel GuardarLabel = new JLabel("¿Quieres guardar la partida?");
              JButton GuardarBoton = new JButton("Guardar");
              JButton NoGuardarBoton = new JButton("No guardar");
+             JLabel CargarLabel = new JLabel("¿Quieres cargar la partida?");
+             JButton CargarBoton = new JButton("Cargar");
              
               GuardarBoton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
                                AccionGuardar();
+                               
 			}
 		});
                NoGuardarBoton.addActionListener(new ActionListener() {
@@ -153,11 +163,21 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
 			}
 		});
         
+                CargarBoton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+                               AccionCargar();
+                               
+			}
+		});
+                
         GuardarPanel = new JDialog();
 		GuardarPanel.getContentPane().setLayout(new FlowLayout());
                 GuardarPanel.getContentPane().add(GuardarLabel); 
 		GuardarPanel.getContentPane().add(GuardarBoton);
                 GuardarPanel.getContentPane().add(NoGuardarBoton);
+                GuardarPanel.getContentPane().add(CargarLabel);
+                GuardarPanel.getContentPane().add(CargarBoton);
 		GuardarPanel.pack();
 		GuardarPanel.setVisible(true);
             
@@ -187,17 +207,24 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         if (check == nomines){
             endtime = System.nanoTime();
             Component temporaryLostComponent = null;
-            JOptionPane.showMessageDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!");
+            
+            JTextField nombreJugador = new JTextField();
+            
+            
+            JOptionPane.showMessageDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!" + "Nombre De Jugador");
+            
             
              JDialog GuardarPanel = new JDialog();
              JLabel GuardarLabel = new JLabel("¿Quieres guardar la partida?");
              JButton GuardarBoton = new JButton("Guardar");
              JButton NoGuardarBoton = new JButton("No guardar");
-             
+             JLabel CargarLabel = new JLabel("¿Quieres cargar la partida?");
+             JButton CargarBoton = new JButton("Cargar");
               GuardarBoton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
                                AccionGuardar();
+                               
 			}
 		});
                NoGuardarBoton.addActionListener(new ActionListener() {
@@ -206,18 +233,78 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
                                System.exit(0);
 			}
 		});
+                CargarBoton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+                               AccionCargar();
+                               
+			}
+		});
         
         GuardarPanel = new JDialog();
 		GuardarPanel.getContentPane().setLayout(new FlowLayout());
                 GuardarPanel.getContentPane().add(GuardarLabel); 
 		GuardarPanel.getContentPane().add(GuardarBoton);
                 GuardarPanel.getContentPane().add(NoGuardarBoton);
+                GuardarPanel.getContentPane().add(CargarLabel);
+                GuardarPanel.getContentPane().add(CargarBoton);
 		GuardarPanel.pack();
 		GuardarPanel.setVisible(true);
         
         }
     }
- 
+
+    public void GuardarTiempo(){
+        
+  
+        int tiempo = (int)((endtime-starttime)/1000000000);
+switch (dificultadV) {
+      case "PRINCIPIANTE":
+        for(int i=0; i<10; i++){
+	 if(tiempos[i] == 0){
+            tiempos[i]= tiempo;
+         }
+         if(tiempo < tiempos[i]){
+            tiempos[i]= tiempo;
+
+         }
+          }
+        System.out.println("Tu tiempo se ha guardado");
+        System.out.println(Arrays.toString(tiempos));
+           break;
+      case "INTERMEDIO":
+          for(int i=0; i<10; i++){
+	 if(tiemposI[i] == 0){
+            tiemposI[i]= tiempo;
+         }
+         if(tiempo < tiemposI[i]){
+            tiemposI[i]= tiempo;
+         }
+          }
+          System.out.println("Tu tiempo se ha guardado");
+          System.out.println(Arrays.toString(tiemposI));
+           break;
+      case "EXPERTO":
+          for(int i=0; i<10; i++){
+	 if(tiemposE[i] == 0){
+            tiemposE[i]= tiempo;
+
+         }
+         if(tiempo < tiemposE[i]){
+            tiemposE[i]= tiempo;
+         }
+          }
+          System.out.println("Tu tiempo se ha guardado");
+          System.out.println(Arrays.toString(tiemposE));
+           break;
+      default:
+           System.out.println("Tu tiempo no esta entre los 10 mejores. No se puede guardar");
+           break;
+      }
+        
+        
+	}
+    
     public void AccionGuardar(){
          JFileChooser selectorFichero = new JFileChooser();
             selectorFichero.setDialogTitle("Guardar Partida");
@@ -234,7 +321,26 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         }
     }
     
+    public void AccionCargar(){
+        
+        JFileChooser selectorFichero = new JFileChooser();
+        selectorFichero.setDialogTitle("Restaurar Partida");
+        selectorFichero.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        
+        int resultado = selectorFichero.showOpenDialog(this);
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            boolean resultadoOK = CargarPartida(selectorFichero.getSelectedFile().getAbsolutePath());
+            if (resultadoOK) {
+                JOptionPane.showMessageDialog(this, "Fichero cargado correctamente", "Restaurar Partida", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Fichero NO cargado", "Restaurar Partida", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
     
+    public void ReiniciarPartida(){
+        new Buscaminas((String) dificultadBox.getSelectedItem());
+    }    
     public void scan(int x, int y){
         for (int a = 0;a<8;a++){
             if (mines[x+1+deltax[a]][y+1+deltay[a]] == 3){
@@ -268,29 +374,40 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     }
  
     public static void main(String[] args){
-           
+        
         JDialog dificultadPanel = new JDialog();
-        JLabel dificultadLabel = new JLabel("Escoge la dificultad del buscaminas");
+        JLabel dificultadLabel = new JLabel("Escoge la dificultad del nuevo buscaminas");
+        JLabel CargarLabel = new JLabel("Cargar partida guardada");
         JComboBox dificultadBox = new JComboBox();
 		dificultadBox.addItem("PRINCIPIANTE");
 		dificultadBox.addItem("INTERMEDIO");
 		dificultadBox.addItem("EXPERTO");
         
         JButton Botonjugar = new JButton("Jugar");
-         
+        JButton BotonCargar = new JButton("Cargar"); 
         Botonjugar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
                             String dificultad = (String) dificultadBox.getSelectedItem();
-				new Buscaminas(dificultad);
+                            dificultadV = dificultad;
+				new Buscaminas(dificultadV);
 			}
 		});
         
+        BotonCargar.addActionListener(new ActionListener(){
+                     @Override
+                      public void actionPerformed(ActionEvent e) {
+                         
+			
+			}
+		});
         dificultadPanel = new JDialog();
 		dificultadPanel.getContentPane().setLayout(new FlowLayout());
-                dificultadPanel.getContentPane().add(dificultadLabel); 
+                dificultadPanel.getContentPane().add(dificultadLabel);
 		dificultadPanel.getContentPane().add(dificultadBox);
                 dificultadPanel.getContentPane().add(Botonjugar);
+                dificultadPanel.getContentPane().add(CargarLabel);
+                dificultadPanel.getContentPane().add(BotonCargar);
 		dificultadPanel.pack();
 		dificultadPanel.setVisible(true);
 
@@ -368,6 +485,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             oos.writeObject(this.perm);
             oos.writeObject(this.tmp);
             oos.writeObject(this.found);
+
             
             oos.flush();
             oos.close();
@@ -377,7 +495,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         return true;
     }
     
-   public boolean restaurarBackUp(String rutaFichero) {
+   public boolean CargarPartida(String rutaFichero) {
         try {
             FileInputStream fis = new FileInputStream(rutaFichero);
             BufferedInputStream bis = new BufferedInputStream(fis);
