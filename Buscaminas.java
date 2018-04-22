@@ -245,7 +245,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             
             
            // JOptionPane.showMessageDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!" + "Si quieres guardar tu tiempo: Añade un Nombre De Jugador");
-            String nombreDeJugador = JOptionPane.showInputDialog("Congratulations you won!!! It took you " +(int)((endtime-starttime)/1000000000)+" seconds!. Escribe tu nombre para guardar tu tiempo"); 
+            nombreDeJugador = JOptionPane.showInputDialog("Congratulations you won!!! It took you " +(int)((endtime-starttime)/1000000000)+" seconds!. Escribe tu nombre para guardar tu tiempo"); 
             if(nombreDeJugador != null){
                 AccionGuardarTiempoJugador();
             }
@@ -277,7 +277,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
            BufferedWriter bw = new BufferedWriter(fw);
            PrintWriter pw = new PrintWriter(bw);
             
-        tiempoGanador = (int)((endtime-starttime)/1000000000);
+            tiempoGanador = (int)((endtime-starttime)/1000000000);
         
             pw.write(this.nombreDeJugador);
             pw.write(this.tiempoGanador);
@@ -300,10 +300,11 @@ switch (dificultadV) {
         for(int i=0; i<10; i++){
 	 if(tiempos[i] == 0){
             tiempos[i]= tiempo;
+            break;
          }
          if(tiempo < tiempos[i]){
             tiempos[i]= tiempo;
-
+            break;
          }
           }
         System.out.println("Tu tiempo se ha guardado");
@@ -313,9 +314,11 @@ switch (dificultadV) {
           for(int i=0; i<10; i++){
 	 if(tiemposI[i] == 0){
             tiemposI[i]= tiempo;
+            break;
          }
          if(tiempo < tiemposI[i]){
             tiemposI[i]= tiempo;
+            break;
          }
           }
           System.out.println("Tu tiempo se ha guardado");
@@ -325,15 +328,18 @@ switch (dificultadV) {
           for(int i=0; i<10; i++){
 	 if(tiemposE[i] == 0){
             tiemposE[i]= tiempo;
-
+            break;
          }
          if(tiempo < tiemposE[i]){
             tiemposE[i]= tiempo;
+            break;
          }
           }
           System.out.println("Tu tiempo se ha guardado");
           System.out.println(Arrays.toString(tiemposE));
            break;
+           
+           
       default:
            System.out.println("Tu tiempo no esta entre los 10 mejores. No se puede guardar");
            break;
