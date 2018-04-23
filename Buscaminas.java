@@ -4,10 +4,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,23 +23,23 @@ import java.util.Arrays;
  
 import javax.swing.*;
 public class Buscaminas extends JFrame implements ActionListener, MouseListener{
-    static String dificultadV;
-    JComboBox dificultadBox;
-    JDialog dificultadPanel;
-    JLabel dificultadLabel;
-    JLabel CargarLabel;
-    JButton Botonjugar;
-    JMenuBar Menu;
+    static String dificultadV; //se introduce en el constructor para establecer el tamaño y la dificultad del buscaminas
+    JComboBox dificultadBox; //Son elementos del swing para crear el menu
+    JDialog dificultadPanel; //Son elementos del swing para crear el menu
+    JLabel dificultadLabel; //Son elementos del swing para crear el menu
+    JLabel CargarLabel; //Son elementos del swing para crear el menu
+    JButton Botonjugar; //Son elementos del swing para crear el menu
+    JMenuBar Menu; //Son elementos del swing para crear el menu
     static JTextField nTextField;
     static JTextField mTextField;
     static JTextField minasTextField;
-    String variableValorBoolean1;
-    String variableValorBoolean2;
-    int[] tiempos = {0,0,0,0,0,0,0,0,0,0};
-    int[] tiemposI = {0,0,0,0,0,0,0,0,0,0};
-    int[] tiemposE = {0,0,0,0,0,0,0,0,0,0};
-    String nombreDeJugador;
-    int tiempoGanador;
+    String variableValorBoolean1; //Variables creadas para intentar guardar un Booleano dentro de un fichero de texto, de momento no hacen falta
+    String variableValorBoolean2; //Variables creadas para intentar guardar un Booleano dentro de un fichero de texto, de momento no hacen falta
+    int[] tiempos = {0,0,0,0,0,0,0,0,0,0}; //Arrays que almacenan los 10 mejores tiempos de cada dificultad
+    int[] tiemposI = {0,0,0,0,0,0,0,0,0,0}; //Arrays que almacenan los 10 mejores tiempos de cada dificultad
+    int[] tiemposE = {0,0,0,0,0,0,0,0,0,0}; //Arrays que almacenan los 10 mejores tiempos de cada dificultad
+    String nombreDeJugador; //String que almacena el nombre de jugador que rellenas cuando ganas una partida(es opcional)
+    int tiempoGanador; //Variable que almacena el tiempo cuando ganas una partida
     int nomines;
     int perm[][];
     String tmp;
@@ -50,14 +52,16 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     boolean allmines;
     int n;
     int m;
-    static int nPerson;
-    static int mPerson;
-    static int minesPerson;
+    static int nPerson; //variable que uso para almacenar el valor del usuario al introducir cuantas filas quiere en la dificultad Personalizado
+    static int mPerson; //variable que uso para almacenar el valor del usuario al introducir cuantas columnas quiere en la dificultad Personalizado
+    static int minesPerson; //variable que uso para almacenar el valor del usuario al introducir cuantas minas quiere en la dificultad Personalizado
     int deltax[] = {-1, 0, 1, -1, 1, -1, 0, 1};
     int deltay[] = {-1, -1, -1, 0, 0, 1, 1, 1};
-    double starttime;
-    double endtime;
-    public Buscaminas(String dificultad){
+    double starttime; //Variable que se usa para calcular el tiempo que ha durado la partida
+    double endtime; //Variable que se usa para calcular el tiempo que ha durado la partida
+    
+    //Constructor principal
+    public Buscaminas(String dificultad){ 
         
         if("PRINCIPIANTE".equals(dificultad)){
             n = 10;
@@ -83,6 +87,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
                   nomines = minesPerson;
               }
         
+        //Elementos del Menu que hay en la cabecera de la ventana
         JMenuBar Menu = new JMenuBar();
         JMenu Guardar = new JMenu("Guardar Partida");
         JMenu Cargar = new JMenu("Cargar Partida");
@@ -99,7 +104,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         Reiniciar.add(reiniciar1);
         Menu.setVisible(true);
         
-
+        //Accion del boton guardar, llama al metodo AccionGuardar
         guardar1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -107,7 +112,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
                                
 			}
 		});
-        
+        //Accion del boton cargar, llama al metodo AccionCargar
         cargar1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -115,6 +120,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
                                
 			}
 		});  
+        //Accion del boton reiniciar, llama al metodo ReiniciarPartida
         reiniciar1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -243,7 +249,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             
             JTextField nombreJugador = new JTextField(10);
             
-            
+           //He puesto un nuevo mensaje cuando ganas la partida, en este nuevo mensaje se muestra un campo para rellenar el nombre del ganador y 
+           //se guarda el tiempo, la linea comentada de abajo es el anitiguo metodo, como lo tenia el codigo inicial
            // JOptionPane.showMessageDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!" + "Si quieres guardar tu tiempo: Añade un Nombre De Jugador");
             nombreDeJugador = JOptionPane.showInputDialog("Congratulations you won!!! It took you " +(int)((endtime-starttime)/1000000000)+" seconds!. Escribe tu nombre para guardar tu tiempo"); 
             if(nombreDeJugador != null){
@@ -255,6 +262,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         
         }
     }
+    //Metodo que llama al JFileChooser, una ventana para elegir donde guardar un fichero dentro de tu pc
+    
     public void AccionGuardarTiempoJugador(){
         JFileChooser selectorFichero = new JFileChooser();
             selectorFichero.setDialogTitle("Guardar Partida");
@@ -270,6 +279,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             }
         }
     }
+    //Metodo que se usa para guardar el tiempo del ganador, en un fichero de texto TXT
     public boolean GuardarTiempoJugador(String rutaFichero){
         try {
             
@@ -282,7 +292,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             pw.write(this.nombreDeJugador);
             pw.write(this.tiempoGanador);
 
-       pw.flush();
+            pw.flush();
             pw.close();
         } catch (Exception ex) {
             return false;
@@ -291,6 +301,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         
     }
     
+    //Segun la dificultad que el jugador eliga su tiempo se guardara en un array u en otro, si cumple los requisitos: ser un mejor tiempo de los que
+    //ya hay en el propio array
     public void GuardarTiempo(){
 
         int tiempo = (int)((endtime-starttime)/1000000000);
@@ -347,7 +359,7 @@ switch (dificultadV) {
         
         
 	}
-    
+    //Mismo que llama al JFileChooser para abrir el selector de ficheros y guardar un fichero
     public void AccionGuardar(){
          JFileChooser selectorFichero = new JFileChooser();
             selectorFichero.setDialogTitle("Guardar Partida");
@@ -363,7 +375,7 @@ switch (dificultadV) {
             }
         }
     }
-    
+    //Mismo que llama al JFileChooser para abrir el selector de ficheros y cargar un fichero
     public void AccionCargar(){
         
         JFileChooser selectorFichero = new JFileChooser();
@@ -380,7 +392,7 @@ switch (dificultadV) {
             }
         }
     }
-    
+    //Metodo que reinicia la partida
     public void ReiniciarPartida(){
        Buscaminas buscaminas = new Buscaminas((String) dificultadBox.getSelectedItem());
     }   
@@ -420,6 +432,7 @@ switch (dificultadV) {
  
     public static void main(String[] args){
 
+        //Todos los componentes de la primera ventana que se abre nada mas iniciar el programa, dando paso a la elección de la dificultad
         
         
         JDialog dificultadPanel = new JDialog();
@@ -460,7 +473,7 @@ switch (dificultadV) {
           
         }
         
-
+        //Incluyo dentro del Panel/Ventana que se abre todos los componentes que quiero que esten
         dificultadPanel = new JDialog();
 		dificultadPanel.getContentPane().setLayout(new FlowLayout());
                 dificultadPanel.getContentPane().add(dificultadLabel);
@@ -525,7 +538,7 @@ switch (dificultadV) {
     public void mouseReleased(MouseEvent arg0) {
         // TODO Auto-generated method stub
     }
- 
+    //Meter todas las variables en un fichero txt para "Guardar" la partida actual tal y como esta en el momento
    public boolean GuardarPartida(String rutaFichero) {
         try {
             FileWriter fw = new FileWriter(rutaFichero);
@@ -567,7 +580,7 @@ switch (dificultadV) {
         }
         return true;
     }
-    
+    //Cargar todas las variables guardadas en el fichero en variables del programa para Cargar la partida guardada anteriormente
    public boolean CargarPartida(String rutaFichero) {
         try {
             FileInputStream fis = new FileInputStream(rutaFichero);
@@ -598,5 +611,36 @@ switch (dificultadV) {
         }
         return true;
     }
+   
+  /* public boolean CargarPartida2(String rutaFichero) {
+        try {
+            FileReader fr = new FileReader(rutaFichero);
+            BufferedReader br = new BufferedReader(fr);
+            
+            
+            this.n = (int) br.read();
+            this.m = (int)br.read();
+            this.nomines = (int)br.read();
+            this.mines = (int[][])br.read();
+            this.allmines = (boolean)br.read();
+            this.deltax = (int[]) br.read();
+            this.deltay = (int[])br.read();
+            this.starttime = (double) br.read();
+            this.endtime = (double) br.read();
+            this.guesses= (int[][])br.read();
+            this.b = (JButton[][])br.read();
+            this.column = (int)br.read();
+            this.row = (int)br.read();
+            this.perm = (int[][])br.read();
+            this.tmp = (String)br.read();
+            this.found = (boolean)br.read();
+            
+            
+            ois.close();
+        } catch (Exception ex) {
+            return false;
+        }
+        return true;
+    }*/
    
 }//end class
