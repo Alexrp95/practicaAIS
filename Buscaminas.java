@@ -83,9 +83,9 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         }
         else
               if("PERSONALIZADO".equals(dificultad)){
-                  n= nPerson;
-                  m = mPerson;
-                  nomines = minesPerson;
+                  n= Integer.parseInt(nTextField.getText());
+                  m = Integer.parseInt(mTextField.getText());
+                  nomines = Integer.parseInt(minasTextField.getText());
               }
         
         //Elementos del Menu que hay en la cabecera de la ventana
@@ -280,7 +280,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             }
         }
     }
-    //Metodo que se usa para guardar el tiempo del ganador, en un fichero de texto TXT
+    //Metodo que se usa para guardar el tiempo del ganador, en un fichero de texto TXT, tambien se puede guardar en una variable como la lista de los 10
+    //mejores tiempos
     public boolean GuardarTiempoJugador(String rutaFichero){
         try {
             
@@ -468,16 +469,7 @@ switch (dificultadV) {
 				new Buscaminas(dificultadV);
 			}
 		});
-        if("PERSONALIZADO" == dificultadBox.getSelectedItem()){
-            //nPerson = (Integer) nTextField.getValue();
-           // mPerson = (Integer) mTextField.getValue();
-           // minesPerson = (Integer) minasTextField.getValue();
-           nPerson = Integer.parseInt(nTextField.getSelectedText());
-           mPerson = Integer.parseInt(mTextField.getSelectedText());
-           minesPerson = Integer.parseInt(minasTextField.getSelectedText());
-           
-          
-        }
+        
         
         //Incluyo dentro del Panel/Ventana que se abre todos los componentes que quiero que esten
         dificultadPanel = new JDialog();
