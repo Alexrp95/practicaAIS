@@ -16,13 +16,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Array;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
  
 import javax.swing.*;
 public class Buscaminas extends JFrame implements ActionListener, MouseListener{
+    
+    //Las variables que pone "static" al inicio es porque las uso dentro del metodo Main y necesitan ser static o sino el programa no funciona
     static String dificultadV; //se introduce en el constructor para establecer el tamaño y la dificultad del buscaminas
     JComboBox dificultadBox; //Son elementos del swing para crear el menu
     JDialog dificultadPanel; //Son elementos del swing para crear el menu
@@ -273,9 +274,9 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         if (resultado == JFileChooser.APPROVE_OPTION) {
             boolean resultadoOK = GuardarPartida(selectorFichero.getSelectedFile().getAbsolutePath());
             if (resultadoOK) {
-                JOptionPane.showMessageDialog(this, "Fichero guardado correctamente", "Guardar Partida", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Fichero guardado correctamente", "Guardar ", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "Lo sentimos, fichero NO guardado", "Guardar Partida", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Lo sentimos, fichero NO guardado", "Guardar ", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -437,23 +438,28 @@ switch (dificultadV) {
         
         JDialog dificultadPanel = new JDialog();
         JLabel dificultadLabel = new JLabel("Escoge la dificultad del nuevo buscaminas");
+        
         JComboBox dificultadBox = new JComboBox();
 		dificultadBox.addItem("PRINCIPIANTE");
 		dificultadBox.addItem("INTERMEDIO");
 		dificultadBox.addItem("EXPERTO");
                 dificultadBox.addItem("PERSONALIZADO");
+                
         JLabel personalizadoLabel = new JLabel("Buscaminas Personalizado");
         JLabel filaLabel = new JLabel("Filas"); 
-        JLabel columnaLabel = new JLabel("Columnas"); 
-        JLabel minasLabel = new JLabel("Minas"); 
         nTextField = new JTextField(10);
+        JLabel columnaLabel = new JLabel("Columnas"); 
         mTextField = new JTextField(10);
+        JLabel minasLabel = new JLabel("Minas");  
         minasTextField = new JTextField(10);
-       // JFormattedTextField nTextField = new JFormattedTextField (new Integer(3));
-       // JFormattedTextField mTextField = new JFormattedTextField (new Integer(3));
-       // JFormattedTextField minasTextField = new JFormattedTextField (new Integer(3));
+        
+       // JFormattedTextField nTextField = new JFormattedTextField (new Integer());
+       // JFormattedTextField mTextField = new JFormattedTextField (new Integer());
+       // JFormattedTextField minasTextField = new JFormattedTextField (new Integer());
         
         JButton Botonjugar = new JButton("Jugar");
+        
+        //Accion del boton Jugar, basicamente recoge el valor de la dificultad seleccionada en el Box y lo mete al constructor e inicializa el juego
         Botonjugar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
