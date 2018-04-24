@@ -18,6 +18,8 @@ import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.TimerTask;
+import java.util.Timer;
 
  
 import javax.swing.*;
@@ -62,8 +64,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     double starttime; //Variable que se usa para calcular el tiempo que ha durado la partida
     double endtime; //Variable que se usa para calcular el tiempo que ha durado la partida
     int contadorMinas; //contador que muestra el numero de minas que quedan en partida
-    static int segundos;
-    
+    int tiempoPartida;
+    static Timer timer;
     //Constructor principal
     public Buscaminas(String dificultad){ 
         
@@ -99,14 +101,29 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         JMenu Guardar = new JMenu("Guardar Partida");
         JMenu Cargar = new JMenu("Cargar Partida");
         JMenu Reiniciar = new JMenu("Reiniciar Partida");
-        JLabel contador = new JLabel();
-        contador.setText(""+ contadorMinas);
+        contador = new JLabel(); //contador que mostrara el numero de minas
+        contador.setText("Minas:"+contadorMinas+""); //añadimos la variable contador de minas que se ira sumando y restando al hacer click derecho
+        JLabel tiempoPartidaBuscaminas= new JLabel(); 
+        tiempoPartidaBuscaminas.setText("Tiempo: "+tiempoPartida);
         
-       
+        TimerTask tempo;
+
+        
+        timer = new Timer();
+        tempo= new TimerTask() {
+            @Override
+            public void run() {
+                tiempoPartida++;
+                tiempoPartidaBuscaminas.setText(" Tiempo: "+tiempoPartida);
+            }
+        };
+        timer.schedule(tempo,0, 1000);
+        //Añadimos los elementos al menu
         Menu.add(Guardar);
         Menu.add(Cargar);
         Menu.add(Reiniciar);
         Menu.add(contador);
+        Menu.add(tiempoPartidaBuscaminas);
         JMenuItem guardar1 = new JMenuItem("Guardar");
         JMenuItem cargar1 = new JMenuItem("Cargar");
         JMenuItem reiniciar1 = new JMenuItem("Reiniciar");
@@ -246,13 +263,28 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         JMenu Cargar = new JMenu("Cargar Partida");
         JMenu Reiniciar = new JMenu("Reiniciar Partida");
         JLabel contador = new JLabel();
-        contador.setText(""+ contadorMinas);
+        contador.setText("Minas"+ contadorMinas+"");
+        JLabel tiempoPartidaBuscaminas= new JLabel(); 
+        tiempoPartidaBuscaminas.setText("Tiempo: "+tiempoPartida);
         
+        TimerTask tempo;
+
+        
+        timer = new Timer();
+        tempo= new TimerTask() {
+            @Override
+            public void run() {
+                tiempoPartida++;
+                tiempoPartidaBuscaminas.setText(" Tiempo: "+tiempoPartida);
+            }
+        };
+        timer.schedule(tempo,0, 1000);
        
         Menu.add(Guardar);
         Menu.add(Cargar);
         Menu.add(Reiniciar);
         Menu.add(contador);
+        Menu.add(tiempoPartidaBuscaminas);
         JMenuItem guardar1 = new JMenuItem("Guardar");
         JMenuItem cargar1 = new JMenuItem("Cargar");
         JMenuItem reiniciar1 = new JMenuItem("Reiniciar");
@@ -742,26 +774,17 @@ switch (dificultadV) {
             }
             if ((guesses[row+1][column+1] == 0) && (b[row][column].isEnabled())){
                 b[row][column].setText("x");
-                contadorMinas--;
-               /* SwingUtilities.invokeLater(new Runnable(){
-                    @Override public void run() {
-                        contador.setText(""+contadorMinas);
-                      }
-                    });*/
-               /* ActionListener listener;
-                listener = new ActionListener(){
-                    public void actionPerformed( ActionEvent e ) {
-                        contador.setText( ""+ contadorMinas);
-                    }
-                };*/
-                
                 guesses[row+1][column+1] = 1;
                 b[row][column].setBackground(Color.orange);
+                 contadorMinas--;
+                 contador.setText("Minas:"+ contadorMinas+"");
+                 
                 } else if (guesses[row+1][column+1] == 1){
                 b[row][column].setText("?");
-                contadorMinas++;
                 guesses[row+1][column+1] = 0;
                 b[row][column].setBackground(null);
+                 contadorMinas++;
+                 contador.setText("Minas:"+ contadorMinas);
             }
         }
     }
