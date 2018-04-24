@@ -29,6 +29,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     JDialog dificultadPanel; //Son elementos del swing para crear el menu
     JLabel dificultadLabel; //Son elementos del swing para crear el menu
     JLabel CargarLabel; //Son elementos del swing para crear el menu
+    JLabel contador;
     JButton Botonjugar; //Son elementos del swing para crear el menu
     JMenuBar Menu; //Son elementos del swing para crear el menu
     static JTextField nTextField;
@@ -36,7 +37,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     static JTextField minasTextField;
     String variableValorBoolean1; //Variables creadas para intentar guardar un Booleano dentro de un fichero de texto, de momento no hacen falta
     String variableValorBoolean2; //Variables creadas para intentar guardar un Booleano dentro de un fichero de texto, de momento no hacen falta
-    int[] tiempos = {0,0,0,0,0,0,0,0,0,0}; //Arrays que almacenan los 10 mejores tiempos de cada dificultad
+    int[] tiempos= {0,0,0,0,0,0,0,0,0,0}; //Arrays que almacenan los 10 mejores tiempos de cada dificultad
     int[] tiemposI = {0,0,0,0,0,0,0,0,0,0}; //Arrays que almacenan los 10 mejores tiempos de cada dificultad
     int[] tiemposE = {0,0,0,0,0,0,0,0,0,0}; //Arrays que almacenan los 10 mejores tiempos de cada dificultad
     String nombreDeJugador; //String que almacena el nombre de jugador que rellenas cuando ganas una partida(es opcional)
@@ -60,6 +61,8 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     int deltay[] = {-1, -1, -1, 0, 0, 1, 1, 1};
     double starttime; //Variable que se usa para calcular el tiempo que ha durado la partida
     double endtime; //Variable que se usa para calcular el tiempo que ha durado la partida
+    int contadorMinas; //contador que muestra el numero de minas que quedan en partida
+    static int segundos;
     
     //Constructor principal
     public Buscaminas(String dificultad){ 
@@ -68,18 +71,21 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             n = 10;
             m = 10;
             nomines = 10;
+            contadorMinas= nomines;
         }
         else 
           if("INTERMEDIO".equals(dificultad)){
             n =16;
             m = 16;
             nomines = 40;
+            contadorMinas= nomines;
         }
          else 
           if("EXPERTO".equals(dificultad)){
             n =32;
             m = 16;
             nomines = 99;
+            contadorMinas= nomines;
         }
         else
               if("PERSONALIZADO".equals(dificultad)){
@@ -93,10 +99,14 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         JMenu Guardar = new JMenu("Guardar Partida");
         JMenu Cargar = new JMenu("Cargar Partida");
         JMenu Reiniciar = new JMenu("Reiniciar Partida");
+        JLabel contador = new JLabel();
+        contador.setText(""+ contadorMinas);
         
+       
         Menu.add(Guardar);
         Menu.add(Cargar);
         Menu.add(Reiniciar);
+        Menu.add(contador);
         JMenuItem guardar1 = new JMenuItem("Guardar");
         JMenuItem cargar1 = new JMenuItem("Cargar");
         JMenuItem reiniciar1 = new JMenuItem("Reiniciar");
@@ -104,6 +114,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         Cargar.add(cargar1);
         Reiniciar.add(reiniciar1);
         Menu.setVisible(true);
+        
         
         //Accion del boton guardar, llama al metodo AccionGuardar
         guardar1.addActionListener(new ActionListener() {
@@ -125,11 +136,13 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         reiniciar1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+                               dispose();
                                ReiniciarPartida();
                                
 			}
 		}); 
         
+
         perm = new int[n][m];
         boolean allmines = false;
         guesses = new int [n+2][m+2];
@@ -198,6 +211,153 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
       
     }//end constructor Mine()
  
+    public Buscaminas(String dificultad, int n, int m, int[][] mines, int[][] guesses, JButton[][] b, boolean allmines, int contadorMinas, int nomines, int [][]perm){ 
+        
+        if("PRINCIPIANTE".equals(dificultad)){
+            n = 10;
+            m = 10;
+            nomines = 10;
+            contadorMinas= nomines;
+        }
+        else 
+          if("INTERMEDIO".equals(dificultad)){
+            n =16;
+            m = 16;
+            nomines = 40;
+            contadorMinas= nomines;
+        }
+         else 
+          if("EXPERTO".equals(dificultad)){
+            n =32;
+            m = 16;
+            nomines = 99;
+            contadorMinas= nomines;
+        }
+        else
+              if("PERSONALIZADO".equals(dificultad)){
+                  n= Integer.parseInt(nTextField.getText());
+                  m = Integer.parseInt(mTextField.getText());
+                  nomines = Integer.parseInt(minasTextField.getText());
+              }
+        
+        //Elementos del Menu que hay en la cabecera de la ventana
+        JMenuBar Menu = new JMenuBar();
+        JMenu Guardar = new JMenu("Guardar Partida");
+        JMenu Cargar = new JMenu("Cargar Partida");
+        JMenu Reiniciar = new JMenu("Reiniciar Partida");
+        JLabel contador = new JLabel();
+        contador.setText(""+ contadorMinas);
+        
+       
+        Menu.add(Guardar);
+        Menu.add(Cargar);
+        Menu.add(Reiniciar);
+        Menu.add(contador);
+        JMenuItem guardar1 = new JMenuItem("Guardar");
+        JMenuItem cargar1 = new JMenuItem("Cargar");
+        JMenuItem reiniciar1 = new JMenuItem("Reiniciar");
+        Guardar.add(guardar1);
+        Cargar.add(cargar1);
+        Reiniciar.add(reiniciar1);
+        Menu.setVisible(true);
+        
+        
+        //Accion del boton guardar, llama al metodo AccionGuardar
+        guardar1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+                               AccionGuardar();
+                               
+			}
+		});
+        //Accion del boton cargar, llama al metodo AccionCargar
+        cargar1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+                               AccionCargar();
+                               
+			}
+		});  
+        //Accion del boton reiniciar, llama al metodo ReiniciarPartida
+        reiniciar1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+                               dispose();
+                               ReiniciarPartida();
+                               
+			}
+		}); 
+        
+
+        perm = new int[n][m];
+ 
+        guesses = new int [n+2][m+2];
+        mines = new int[n+2][m+2];
+        b = new JButton [n][m];
+        setLayout(new GridLayout(n,m));
+ 
+        for (int y = 0;y<m+2;y++){
+            mines[0][y] = 3;
+            mines[n+1][y] = 3;
+            guesses[0][y] = 3;
+            guesses[n+1][y] = 3;
+        }
+        for (int x = 0;x<n+2;x++){
+            mines[x][0] = 3;
+            mines[x][m+1] = 3;
+            guesses[x][0] = 3;
+            guesses[x][m+1] = 3;
+        }
+        do {
+            int check = 0;
+            for (int y = 1;y<m+1;y++){
+                for (int x = 1;x<n+1;x++){
+                    mines[x][y] = 0;
+                    guesses[x][y] = 0;
+                }
+            }
+            for (int x = 0;x<nomines;x++){
+                mines [(int) (Math.random()*(n)+1)][(int) (Math.random()*(m)+1)] = 1;
+            }
+            for (int x = 0;x<n;x++){
+                for (int y = 0;y<m;y++){
+                if (mines[x+1][y+1] == 1){
+                        check++;
+                    }
+                }
+            }
+            if (check == nomines){
+                allmines = true;
+            }
+        }while (allmines == false);
+        for (int y = 0;y<m;y++){
+            for (int x = 0;x<n;x++){
+                if ((mines[x+1][y+1] == 0) || (mines[x+1][y+1] == 1)){
+                    perm[x][y] = perimcheck(x,y);
+                }
+                b[x][y] = new JButton("?");
+                b[x][y].addActionListener(this);
+                b[x][y].addMouseListener(this);
+                add(b[x][y]);
+                b[x][y].setEnabled(true);
+            }//end inner for
+        }//end for
+        pack();
+        setVisible(true);
+        setJMenuBar(Menu);
+        
+        setLocationRelativeTo(null);
+        
+        for (int y = 0;y<m+2;y++){
+            for (int x = 0;x<n+2;x++){
+                System.out.print(mines[x][y]);
+            }
+        System.out.println("");}
+        starttime = System.nanoTime();
+      
+    }//end constructor Mine()
+    
+    
     public void actionPerformed(ActionEvent e){
         found =  false;
         JButton current = (JButton)e.getSource();
@@ -257,7 +417,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             if(nombreDeJugador != null){
                 AccionGuardarTiempoJugador();
             }
-            GuardarTiempo();
+               GuardarTiempo();
                System.exit(0);
              
         
@@ -267,12 +427,12 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     
     public void AccionGuardarTiempoJugador(){
         JFileChooser selectorFichero = new JFileChooser();
-            selectorFichero.setDialogTitle("Guardar Partida");
+            selectorFichero.setDialogTitle("Guardar Nombre y Tiempo");
             selectorFichero.setFileSelectionMode(JFileChooser.FILES_ONLY);
         
         int resultado = selectorFichero.showSaveDialog(this);
         if (resultado == JFileChooser.APPROVE_OPTION) {
-            boolean resultadoOK = GuardarPartida(selectorFichero.getSelectedFile().getAbsolutePath());
+            boolean resultadoOK = GuardarTiempoJugador(selectorFichero.getSelectedFile().getAbsolutePath());
             if (resultadoOK) {
                 JOptionPane.showMessageDialog(this, "Fichero guardado correctamente", "Guardar ", JOptionPane.INFORMATION_MESSAGE);
             } else {
@@ -285,17 +445,16 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     public boolean GuardarTiempoJugador(String rutaFichero){
         try {
             
-           FileWriter fw = new FileWriter(rutaFichero);
-           BufferedWriter bw = new BufferedWriter(fw);
-           PrintWriter pw = new PrintWriter(bw);
+            FileWriter fw= new FileWriter(rutaFichero);
+            BufferedWriter bw = new BufferedWriter(fw);
             
             tiempoGanador = (int)((endtime-starttime)/1000000000);
-        
-            pw.write(this.nombreDeJugador);
-            pw.write(this.tiempoGanador);
+            
+            bw.write("Nombre de Jugador:"+""+nombreDeJugador+" "+ "Tiempo Total:"+""+tiempoGanador+System.getProperty("line.separator"));
 
-            pw.flush();
-            pw.close();
+
+            bw.flush();
+            bw.close();
         } catch (Exception ex) {
             return false;
         }
@@ -307,20 +466,37 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     //ya hay en el propio array
     public void GuardarTiempo(){
 
+
         int tiempo = (int)((endtime-starttime)/1000000000);
 switch (dificultadV) {
       case "PRINCIPIANTE":
-
+         
+         
         for(int i=0; i<10; i++){
 	 if(tiempos[i] == 0){
             tiempos[i]= tiempo;
             break;
          }
-         if(tiempo < tiempos[i]){
+         if(tiempos.length == 10 && tiempo < tiempos[i]){
             tiempos[i]= tiempo;
             break;
          }
           }
+        try{
+                File archivo;
+                String ruta ="Mejores 10 Tiempos Buscaminas.txt";
+                archivo = new File (ruta);
+                archivo.createNewFile();
+             FileWriter fw= new FileWriter(archivo);
+             BufferedWriter bw = new BufferedWriter(fw);
+                  for(int i=0; i<tiempos.length;i++){
+                      bw.write(" "+tiempos[i]+ System.getProperty("line.separator"));
+                   }
+              bw.flush();
+              bw.close();
+        }catch(IOException e){}
+              
+              
         System.out.println("Tu tiempo se ha guardado");
         System.out.println(Arrays.toString(tiempos));
            break;
@@ -330,11 +506,26 @@ switch (dificultadV) {
             tiemposI[i]= tiempo;
             break;
          }
-         if(tiempo < tiemposI[i]){
+         if(tiempos.length == 10 && tiempo < tiempos[i]){
             tiemposI[i]= tiempo;
             break;
          }
           }
+          try{
+                File archivo;
+                String ruta ="Mejores 10 Tiempos Buscaminas.txt";
+                archivo = new File (ruta);
+                archivo.createNewFile();
+             FileWriter fw= new FileWriter(archivo);
+             BufferedWriter bw = new BufferedWriter(fw);
+                  for(int i=0; i<tiempos.length;i++){
+                      bw.write(" "+tiemposI[i]+ System.getProperty("line.separator"));
+                   }
+              bw.flush();
+              bw.close();
+        }catch(IOException e){}
+          
+          
           System.out.println("Tu tiempo se ha guardado");
           System.out.println(Arrays.toString(tiemposI));
            break;
@@ -344,11 +535,25 @@ switch (dificultadV) {
             tiemposE[i]= tiempo;
             break;
          }
-         if(tiempo < tiemposE[i]){
+         if(tiempos.length == 10 && tiempo < tiempos[i]){
             tiemposE[i]= tiempo;
             break;
          }
           }
+          try{
+                File archivo;
+                String ruta ="Mejores 10 Tiempos Buscaminas.txt";
+                archivo = new File (ruta);
+                archivo.createNewFile();
+             FileWriter fw= new FileWriter(archivo);
+             BufferedWriter bw = new BufferedWriter(fw);
+                  for(int i=0; i<tiempos.length;i++){
+                      bw.write(" "+tiemposE[i]+ System.getProperty("line.separator"));
+                   }
+              bw.flush();
+              bw.close();
+        }catch(IOException e){}
+          
           System.out.println("Tu tiempo se ha guardado");
           System.out.println(Arrays.toString(tiemposE));
            break;
@@ -392,11 +597,14 @@ switch (dificultadV) {
             } else {
                 JOptionPane.showMessageDialog(this, "Fichero NO cargado", "Restaurar Partida", JOptionPane.ERROR_MESSAGE);
             }
+              new Buscaminas(dificultadV, n, m, mines,guesses,b,allmines,contadorMinas,nomines, perm);
         }
+          new Buscaminas(dificultadV, n, m, mines,guesses,b,allmines,contadorMinas,nomines, perm);
     }
     //Metodo que reinicia la partida
     public void ReiniciarPartida(){
-       Buscaminas buscaminas = new Buscaminas((String) dificultadBox.getSelectedItem());
+        
+       Buscaminas buscaminas = new Buscaminas(dificultadV);
     }   
    
 
@@ -428,6 +636,13 @@ switch (dificultadV) {
         return minecount;
     }
  
+    
+    private static void delaySegundo(){
+        try{
+            Thread.sleep(1000);
+        } catch(InterruptedException e){}
+    }
+    
     public void windowIconified(WindowEvent e){
  
     }
@@ -467,6 +682,11 @@ switch (dificultadV) {
                             String dificultad = (String) dificultadBox.getSelectedItem();
                             dificultadV = dificultad;
 				new Buscaminas(dificultadV);
+                                 /*for(segundos =0;segundos<=999;segundos++){
+                                       System.out.println(segundos);
+                                       delaySegundo();
+                                     }*/
+        
 			}
 		});
         
@@ -522,10 +742,24 @@ switch (dificultadV) {
             }
             if ((guesses[row+1][column+1] == 0) && (b[row][column].isEnabled())){
                 b[row][column].setText("x");
+                contadorMinas--;
+               /* SwingUtilities.invokeLater(new Runnable(){
+                    @Override public void run() {
+                        contador.setText(""+contadorMinas);
+                      }
+                    });*/
+               /* ActionListener listener;
+                listener = new ActionListener(){
+                    public void actionPerformed( ActionEvent e ) {
+                        contador.setText( ""+ contadorMinas);
+                    }
+                };*/
+                
                 guesses[row+1][column+1] = 1;
                 b[row][column].setBackground(Color.orange);
-            } else if (guesses[row+1][column+1] == 1){
+                } else if (guesses[row+1][column+1] == 1){
                 b[row][column].setText("?");
+                contadorMinas++;
                 guesses[row+1][column+1] = 0;
                 b[row][column].setBackground(null);
             }
@@ -539,40 +773,36 @@ switch (dificultadV) {
     //Meter todas las variables en un fichero txt para "Guardar" la partida actual tal y como esta en el momento
    public boolean GuardarPartida(String rutaFichero) {
         try {
-            FileWriter fw = new FileWriter(rutaFichero);
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter pw = new PrintWriter(bw);
+                FileOutputStream fos= new FileOutputStream(rutaFichero);
+                BufferedOutputStream bos = new BufferedOutputStream(fos);
+                ObjectOutputStream oos = new ObjectOutputStream(bos);
+                
+                oos.writeInt(n);
+                oos.writeInt(m);
+                oos.writeInt(nomines);
+                oos.writeObject(mines);
+                oos.writeBoolean(allmines);
+                oos.writeObject(deltax);
+                oos.writeObject(deltay);
+                oos.writeInt((int)starttime);
+                oos.writeInt((int)endtime);
+                oos.writeObject(guesses);
+                oos.writeInt(column);
+                oos.writeInt(row);
+                oos.writeObject(perm);
+                oos.writeObject(tmp);
+                oos.writeBoolean(found);
+                oos.writeInt(contadorMinas);
+                oos.writeObject(dificultadV);
+                
+                for(int i = 0;i < n;i++){
+                    for (int j = 0; j < m; j++){
+                        oos.writeObject(b[i][j].getText());                
+                    }
+                }
             
-            
-            pw.write(this.n);
-            pw.write(this.m);
-            pw.write(this.nomines);
-            for(int i = 0; i<mines.length;i++){ 
-                fw.write(mines[i]+"\n");}
-            variableValorBoolean1 = String.valueOf(allmines);
-            pw.write(variableValorBoolean1);
-            for(int i = 0; i<deltax.length;i++){ 
-                fw.write(deltax[i]+"\n");}
-            for(int i = 0; i<deltay.length;i++){ 
-                fw.write(deltay[i]+"\n");}
-            pw.write((int) this.starttime);
-            pw.write((int) this.endtime);
-            for(int i = 0; i<guesses.length;i++){ 
-                fw.write(guesses[i]+"\n");}
-            for(int i = 0; i<b.length;i++){ 
-                fw.write(b[i]+"\n");}
-            pw.write(this.column);
-            pw.write(this.row);
-            for(int i = 0; i<perm.length;i++){ 
-                fw.write(perm[i]+"\n");}
-            pw.write(this.tmp);
-            variableValorBoolean2 = String.valueOf(perm);
-            pw.write(variableValorBoolean2);
-            
-
-            
-            pw.flush();
-            pw.close();
+            oos.flush();
+            oos.close();
         } catch (Exception ex) {
             return false;
         }
@@ -595,14 +825,22 @@ switch (dificultadV) {
             this.starttime = (double) ois.readObject();
             this.endtime = (double) ois.readObject();
             this.guesses= (int[][])ois.readObject();
-            this.b = (JButton[][])ois.readObject();
             this.column = (int)ois.readObject();
             this.row = (int)ois.readObject();
             this.perm = (int[][])ois.readObject();
             this.tmp = (String)ois.readObject();
             this.found = (boolean)ois.readObject();
-            
-            
+            this.contadorMinas = (int)ois.readObject();
+            this.dificultadV = (String)ois.readObject();
+               
+               
+               for(int k = 0;k < n;k++){
+                    for (int j = 0; j < m; j++){
+                        this.b[k][j] = new JButton((String)ois.readObject());
+                    }
+                }
+          
+
             ois.close();
         } catch (Exception ex) {
             return false;
@@ -612,27 +850,33 @@ switch (dificultadV) {
    
   /* public boolean CargarPartida2(String rutaFichero) {
         try {
-            FileReader fr = new FileReader(rutaFichero);
-            BufferedReader br = new BufferedReader(fr);
-            
-            
-            this.n = (int) br.read();
-            this.m = (int)br.read();
-            this.nomines = (int)br.read();
-            this.mines = (int[][])br.read();
-            this.allmines = (boolean)br.read();
-            this.deltax = (int[]) br.read();
-            this.deltay = (int[])br.read();
-            this.starttime = (double) br.read();
-            this.endtime = (double) br.read();
-            this.guesses= (int[][])br.read();
-            this.b = (JButton[][])br.read();
-            this.column = (int)br.read();
-            this.row = (int)br.read();
-            this.perm = (int[][])br.read();
-            this.tmp = (String)br.read();
-            this.found = (boolean)br.read();
-            
+                FileInputStream fis = new FileInputStream(rutaFichero);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                ObjectInputStream ois = new ObjectInputStream(bis);
+   
+                Integer n = (Integer)ois.readInt();
+                Integer m = (Integer)ois.readInt();
+                Integer nomines = (Integer)ois.readInt();
+                Integer contmines = (Integer)ois.readInt();
+                String i = (String)ois.readObject();
+                String tmp = (String)ois.readObject();
+                Boolean found = (Boolean)ois.readBoolean();
+                Integer row = (Integer)ois.readInt();
+                Integer column = (Integer)ois.readInt();
+                Integer tiempom = (Integer)ois.readInt();
+                int[][] perm = (int[][])ois.readObject();
+                int[][] guesses = (int[][])ois.readObject();
+                int[][] mines = (int[][])ois.readObject();
+                
+               JButton[][] b = new JButton[n][m];
+               
+               for(int k = 0;k < n;k++){
+                    for (int j = 0; j < m; j++){
+                        b[k][j] = new JButton((String)ois.readObject());
+                    }
+                }
+            new Buscaminas(n, m, nomines, contmines, i, tmp, found, row, column, tiempom,
+                    perm, guesses, mines, b);
             
             ois.close();
         } catch (Exception ex) {
