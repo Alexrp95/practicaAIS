@@ -231,7 +231,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
  
     
     //el mismo constructor que el anterior solo que el valor de las variables se las pasamos por parametros
-    public Buscaminas(String dificultad, int n, int m, int[][] mines, int[][] guesses, JButton[][] b, boolean allmines, int contadorMinas, int nomines, int [][]perm){ 
+    public Buscaminas(String dificultad, int n, int m, int[][] mines, int[][] guesses, JButton[][] b, boolean allmines, int contadorMinas, int nomines, int [][]perm, int tiempoPartida){ 
         
         if("PRINCIPIANTE".equals(dificultad)){
             n = 10;
@@ -277,7 +277,7 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
         tempo= new TimerTask() {
             @Override
             public void run() {
-                tiempoPartida++;
+
                 tiempoPartidaBuscaminas.setText(" Tiempo: "+tiempoPartida);
             }
         };
@@ -445,12 +445,14 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
             endtime = System.nanoTime();
             Component temporaryLostComponent = null;
             
-            JTextField nombreJugador = new JTextField(10); //etiqueta que almacenara el valor del nombre de jugador
+            
             
            //He puesto un nuevo mensaje cuando ganas la partida, en este nuevo mensaje se muestra un campo para rellenar el nombre del ganador y 
            //se guarda el tiempo, la linea comentada de abajo es el anitiguo metodo, como lo tenia el codigo inicial
            // JOptionPane.showMessageDialog(temporaryLostComponent, "Congratulations you won!!! It took you "+(int)((endtime-starttime)/1000000000)+" seconds!" + "Si quieres guardar tu tiempo: Añade un Nombre De Jugador");
-            nombreDeJugador = JOptionPane.showInputDialog("Congratulations you won!!! It took you " +(int)((endtime-starttime)/1000000000)+" seconds!. Escribe tu nombre para guardar tu tiempo"); 
+           JTextField nombreJugador = new JTextField(10); //etiqueta que almacenara el valor del nombre de jugador 
+           nombreDeJugador = JOptionPane.showInputDialog("Congratulations you won!!! It took you " +(int)((endtime-starttime)/1000000000)+" seconds!. "
+                    + "Escribe tu nombre para guardar tu tiempo"); 
             if(nombreDeJugador != null){
                 AccionGuardarTiempoJugador();
             }
@@ -502,8 +504,6 @@ public class Buscaminas extends JFrame implements ActionListener, MouseListener{
     //Segun la dificultad que el jugador eliga su tiempo se guardara en un array u en otro, si cumple los requisitos: ser un mejor tiempo de los que
     //ya hay en el propio array
     public void GuardarTiempo(){
-
-
         int tiempo = (int)((endtime-starttime)/1000000000);
 switch (dificultadV) {
       case "PRINCIPIANTE":
@@ -531,9 +531,7 @@ switch (dificultadV) {
                    }
               bw.flush();
               bw.close();
-        }catch(IOException e){}
-              
-              
+        }catch(IOException e){}      
         System.out.println("Tu tiempo se ha guardado");
         System.out.println(Arrays.toString(tiempos));
            break;
@@ -634,16 +632,19 @@ switch (dificultadV) {
             } else {
                 JOptionPane.showMessageDialog(this, "Fichero NO cargado", "Restaurar Partida", JOptionPane.ERROR_MESSAGE);
             }
-              new Buscaminas(dificultadV, n, m, mines,guesses,b,allmines,contadorMinas,nomines, perm);
+              new Buscaminas(dificultadV, n, m, mines,guesses,b,allmines,contadorMinas,nomines, perm,  tiempoPartida);
         }
-          new Buscaminas(dificultadV, n, m, mines,guesses,b,allmines,contadorMinas,nomines, perm);
+          new Buscaminas(dificultadV, n, m, mines,guesses,b,allmines,contadorMinas,nomines, perm,  tiempoPartida);
     }
     //Metodo que reinicia la partida, llama de nuevo a un buscaminas el anterior buscaminas se cierra al pulsar el boton de reiniciar partida
     public void ReiniciarPartida(){
         
        Buscaminas buscaminas = new Buscaminas(dificultadV);
     }   
-   
+     public void ReiniciarPartida2(){
+        
+       Buscaminas buscaminas = new Buscaminas(dificultadV, n, m, mines,guesses,b,allmines,contadorMinas,nomines, perm,  tiempoPartida);
+    }   
 
     public void scan(int x, int y){
         for (int a = 0;a<8;a++){
@@ -818,6 +819,8 @@ switch (dificultadV) {
                 oos.writeBoolean(found);
                 oos.writeInt(contadorMinas);
                 oos.writeObject(dificultadV);
+                oos.writeObject(contadorMinas);
+                oos.writeObject(tiempoPartida);
                 
                 for(int i = 0;i < n;i++){
                     for (int j = 0; j < m; j++){
@@ -856,7 +859,8 @@ switch (dificultadV) {
             this.found = (boolean)ois.readObject();
             this.contadorMinas = (int)ois.readObject();
             this.dificultadV = (String)ois.readObject();
-               
+            this.contadorMinas = (int) ois.readObject();
+            this.tiempoPartida = (int) ois.readObject();
                
                for(int k = 0;k < n;k++){
                     for (int j = 0; j < m; j++){
